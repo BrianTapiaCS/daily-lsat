@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #f3efe6;
+  --ink: #1c1915;
+  --muted: #635c52;
+  --line: #e3dac8;
+  --card: #fbf8f2;
+  --right: #1f6b45;
+  --right-soft: #e7f3ec;
+  --wrong: #8d2f2f;
+  --wrong-soft: #f8e8e4;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-card: var(--card);
+  --color-right: var(--right);
+  --color-right-soft: var(--right-soft);
+  --color-wrong: var(--wrong);
+  --color-wrong-soft: var(--wrong-soft);
+  --font-sans: var(--font-outfit);
+  --font-serif: var(--font-newsreader);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-outfit), sans-serif;
+}
+
+.font-serif {
+  font-family: var(--font-newsreader), Georgia, serif;
+}
+
+.button-primary {
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.8rem 1.3rem;
+  font-size: 0.95rem;
+}
+
+.button-primary:disabled {
+  opacity: 0.45;
+}
+
+.button-primary:focus-visible,
+.field:focus-visible,
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.field {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: white;
+  padding: 0.7rem 0.8rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

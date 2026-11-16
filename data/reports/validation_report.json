@@ -1,0 +1,139 @@
+{
+  "dataset": "ooakdata/lsat-reasoning",
+  "config": "default",
+  "split": "train",
+  "license_note": "The dataset page reports CC BY 4.0 and attribution to ooakdata. Verify the current license before public or commercial distribution. These are LSAT-style practice questions, not official LSAC material. Structural validation does not prove that answer keys or explanations are correct.",
+  "rows_read": 12497,
+  "kept_clean": 3307,
+  "flagged_for_review": 44,
+  "rejected": 9146,
+  "sample_size_requested": 100,
+  "seed": 42,
+  "rejection_counts": {
+    "answer_choice_count_2": 1,
+    "answer_choice_count_3": 1,
+    "answer_choice_count_4": 25,
+    "answer_choice_count_6": 61,
+    "answer_choice_count_7": 4,
+    "answer_choice_count_9": 1,
+    "answer_choice_empty_text": 1,
+    "explanation_missing": 1,
+    "question_type_missing": 6251,
+    "question_type_other": 292,
+    "section_logic_games": 4673
+  },
+  "flag_counts": {
+    "duplicate_choice_text": 6,
+    "uneven_choice_length": 24,
+    "very_short_choice": 18
+  },
+  "rejection_examples": {
+    "question_type_missing": [
+      "OD10001",
+      "OD10002",
+      "OD10003",
+      "OD10004",
+      "OD10005",
+      "OD10006",
+      "OD10008",
+      "OD10010",
+      "OD10012",
+      "OD10014",
+      "OD10015",
+      "OD10017",
+      "OD10018",
+      "OD10019",
+      "OD10020"
+    ],
+    "question_type_other": [
+      "OD1001",
+      "OD1002",
+      "OD1003",
+      "OD1004",
+      "OD1008",
+      "OD1009",
+      "OD1023",
+      "OD1024",
+      "OD1084",
+      "OD1085",
+      "OD1086",
+      "OD1087",
+      "OD1089",
+      "OD1091",
+      "OD1092"
+    ],
+    "section_logic_games": [
+      "OD10021",
+      "OD10022",
+      "OD10023",
+      "OD10024",
+      "OD10025",
+      "OD10026",
+      "OD10027",
+      "OD10028",
+      "OD10029",
+      "OD10030",
+      "OD10031",
+      "OD10032",
+      "OD10033",
+      "OD10034",
+      "OD10035"
+    ],
+    "answer_choice_count_6": [
+      "OD10227",
+      "OD10249",
+      "OD10372",
+      "OD10633",
+      "OD106718",
+      "OD106840",
+      "OD106844",
+      "OD106885",
+      "OD106901",
+      "OD107099",
+      "OD17059",
+      "OD17155",
+      "OD17179",
+      "OD17312",
+      "OD30272"
+    ],
+    "answer_choice_count_7": [
+      "OD107013",
+      "OD50261",
+      "OD7463",
+      "OD7927"
+    ],
+    "answer_choice_count_4": [
+      "OD11631",
+      "OD11632",
+      "OD12758",
+      "OD15056",
+      "OD1808",
+      "OD1809",
+      "OD2278",
+      "OD2279",
+      "OD2280",
+      "OD2281",
+      "OD2282",
+      "OD2283",
+      "OD2284",
+      "OD2576",
+      "OD2578"
+    ],
+    "answer_choice_empty_text": [
+      "OD1974"
+    ],
+    "answer_choice_count_2": [
+      "OD2524"
+    ],
+    "answer_choice_count_3": [
+      "OD3659"
+    ],
+    "answer_choice_count_9": [
+      "OD9415"
+    ],
+    "explanation_missing": [
+      "OD9558"
+    ]
+  },
+  "difficulty_note": "The source dataset has no difficulty field. Exported questions store difficulty as null."
+}
