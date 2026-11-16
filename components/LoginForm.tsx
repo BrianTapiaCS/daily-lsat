@@ -3,7 +3,34 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
+import { accountEmail, storedPassword } from "@/lib/account-credentials";
 import { createClient } from "@/lib/supabase/client";
+
+type AuthClient = NonNullable<ReturnType<typeof createClient>>;
+
+async function signInWithAnyPassword(supabase: AuthClient, identity: string, password: string) {
+  const direct = await supabase.auth.signInWithPassword({ email: identity, password });
+  if (!direct.error) return { error: null };
+  const secret = await storedPassword(password);
+  if (secret === password) return { error: direct.error.message };
+  const stored = await supabase.auth.signInWithPassword({ email: identity, password: secret });
+  return { error: stored.error ? stored.error.message : null };
+}
+
+async function createAccount(supabase: AuthClient, name: string, password: string) {
+  const response = await fetch("/api/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, password }),
+  });
+  const payload = (await response.json().catch(() => null)) as { error?: string; email?: string } | null;
+  if (!response.ok || !payload?.email) return { error: payload?.error ?? "Could not create the account." };
+  const signedIn = await supabase.auth.signInWithPassword({
+    email: payload.email,
+    password: await storedPassword(password),
+  });
+  return { error: signedIn.error ? signedIn.error.message : null };
+}
 
 export function LoginForm() {
   const router = useRouter();
@@ -22,19 +49,14 @@ export function LoginForm() {
     }
     setPending(true);
     setMessage(null);
-    const identity = email.includes("@") ? email.trim() : `${email.trim().toLowerCase()}@daily-lsat.app`;
-    const secret = identity === "dani@daily-lsat.app" && password === "dani" ? "danidani" : password;
+    const identity = accountEmail(email);
     const result =
       mode === "sign-in"
-        ? await supabase.auth.signInWithPassword({ email: identity, password: secret })
-        : await supabase.auth.signUp({ email: identity, password: secret });
+        ? await signInWithAnyPassword(supabase, identity, password)
+        : await createAccount(supabase, email.trim(), password);
     setPending(false);
     if (result.error) {
-      setMessage(result.error.message);
-      return;
-    }
-    if (mode === "create" && !result.data.session) {
-      setMessage("Account created. Confirm the email if confirmation is turned on, then sign in.");
+      setMessage(result.error);
       return;
     }
     router.push("/dashboard");
@@ -53,10 +75,8 @@ export function LoginForm() {
           className="field"
           type="password"
           autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
-          minLength={4}
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          required
         />
       </label>
       {message ? <p className="text-sm text-wrong">{message}</p> : null}
