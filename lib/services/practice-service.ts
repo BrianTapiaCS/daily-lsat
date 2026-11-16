@@ -1,6 +1,15 @@
 import { assertAvailableQuestionIsSafe } from "@/lib/daily-rules";
 import { asRecord } from "@/lib/api";
+import {
+  localHistory,
+  localHistoryItem,
+  localProgress,
+  localSaveProfile,
+  localSubmit,
+  localToday,
+} from "@/lib/local-practice";
 import { createClient } from "@/lib/supabase/server";
+import { getSupabasePublicEnv } from "@/lib/supabase/env";
 
 export type ServiceFailure = {
   ok: false;
@@ -48,6 +57,27 @@ function databaseFailure(error: { message: string; code?: string }): ServiceFail
   return { ok: false, status: 500, error: "database_error", message: error.message };
 }
 
+function useLocalPractice(): boolean {
+  return getSupabasePublicEnv() === null;
+}
+
+function fromLocal(data: Record<string, unknown>): ServiceSuccess<Record<string, unknown>> | ServiceFailure {
+  if (data.ok === false && typeof data.error === "string") {
+    return failure(data.error, {
+      serverNow: data.serverNow,
+      nextAvailableAt: data.nextAvailableAt,
+    });
+  }
+  if (data.status === "available") {
+    try {
+      assertAvailableQuestionIsSafe(data);
+    } catch {
+      return { ok: false, status: 500, error: "answer_leak_blocked" };
+    }
+  }
+  return { ok: true, data };
+}
+
 async function callRpc(
   name: string,
   args?: Record<string, unknown>,
@@ -73,6 +103,7 @@ async function callRpc(
 }
 
 export async function loadToday(): Promise<ServiceSuccess<Record<string, unknown>> | ServiceFailure> {
+  if (useLocalPractice()) return fromLocal(await localToday());
   const result = await callRpc("get_daily_question");
   if (!result.ok) return result;
   if (result.data.status === "unauthenticated") return failure("not_authenticated");
@@ -94,6 +125,7 @@ export async function submitAnswer(
   if (typeof questionId !== "string" || typeof selectedAnswer !== "string") {
     return failure("invalid_answer");
   }
+  if (useLocalPractice()) return fromLocal(await localSubmit(questionId, selectedAnswer));
 
   // timeTakenSeconds may be present. The database computes duration from served_at.
   const result = await callRpc("submit_daily_attempt", {
@@ -111,6 +143,7 @@ export async function submitAnswer(
 }
 
 export async function loadProgress(): Promise<ServiceSuccess<Record<string, unknown>> | ServiceFailure> {
+  if (useLocalPractice()) return fromLocal(await localProgress());
   const result = await callRpc("get_progress");
   if (!result.ok) return result;
   if (result.data.ok === false && typeof result.data.error === "string") return failure(result.data.error);
@@ -121,6 +154,7 @@ export async function loadHistory(
   limit: number,
   offset: number,
 ): Promise<ServiceSuccess<Record<string, unknown>> | ServiceFailure> {
+  if (useLocalPractice()) return fromLocal(await localHistory(limit, offset));
   const result = await callRpc("get_history", { p_limit: limit, p_offset: offset });
   if (!result.ok) return result;
   if (result.data.ok === false && typeof result.data.error === "string") return failure(result.data.error);
@@ -130,6 +164,7 @@ export async function loadHistory(
 export async function loadHistoryItem(
   attemptId: string,
 ): Promise<ServiceSuccess<Record<string, unknown>> | ServiceFailure> {
+  if (useLocalPractice()) return fromLocal(await localHistoryItem(attemptId));
   const result = await callRpc("review_for_attempt", { p_attempt_id: attemptId });
   if (!result.ok) return result;
   if (result.data.ok === false && typeof result.data.error === "string") return failure(result.data.error);
@@ -143,6 +178,7 @@ export async function saveProfile(
   if (typeof record?.displayName !== "string" || typeof record.timezone !== "string") {
     return failure("invalid_name");
   }
+  if (useLocalPractice()) return fromLocal(await localSaveProfile(record.displayName, record.timezone));
   const result = await callRpc("update_profile", {
     p_display_name: record.displayName,
     p_timezone: record.timezone,

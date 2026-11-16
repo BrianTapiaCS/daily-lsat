@@ -38,7 +38,11 @@ yarn-error.log*
 /data/raw/
 /data/processed/eligible.json
 /data/processed/flagged.json
+/data/local/
 /data_sample.json
+
+# supabase CLI scratch files
+supabase/.temp/
 
 # vercel
 .vercel

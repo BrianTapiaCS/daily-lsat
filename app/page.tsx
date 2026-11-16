@@ -1,6 +1,9 @@
 import Link from "next/link";
 
+import { getSupabasePublicEnv } from "@/lib/supabase/env";
+
 export default function HomePage() {
+  const local = getSupabasePublicEnv() === null;
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-8 px-5 py-16 sm:py-24">
       <p className="text-sm uppercase tracking-[0.18em] text-muted">Logical Reasoning</p>
@@ -12,8 +15,8 @@ export default function HomePage() {
         one unlocks 24 hours after you submit.
       </p>
       <div className="flex flex-wrap gap-3">
-        <Link href="/login" className="button-primary">
-          Sign in
+        <Link href={local ? "/question" : "/login"} className="button-primary">
+          {local ? "Start today’s question" : "Sign in"}
         </Link>
         <Link href="/credits" className="rounded-full border border-line px-5 py-3 text-sm">
           Source and license

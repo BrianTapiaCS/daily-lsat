@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { CountdownTimer } from "@/components/CountdownTimer";
+import { LocalReset } from "@/components/LocalReset";
 import { LocalTime } from "@/components/LocalTime";
 import { Notice } from "@/components/Notice";
 import { ProfileSettings } from "@/components/ProfileSettings";
@@ -43,6 +44,7 @@ async function DashboardContent() {
   if (!result.ok) {
     return <Notice title="Progress is unavailable" body={result.message ?? "Sign in and apply the database migration."} />;
   }
+  const localMode = result.data.mode === "local";
   if (!isProgress(result.data)) {
     return <Notice title="Progress is unavailable" body="The progress response did not have the expected fields." />;
   }
@@ -54,6 +56,12 @@ async function DashboardContent() {
       <header className="space-y-2">
         <p className="text-sm uppercase tracking-[0.16em] text-muted">Welcome back</p>
         <h1 className="font-serif text-5xl tracking-tight">{progress.displayName}</h1>
+        {localMode ? (
+          <p className="text-muted">
+            No account is required. Progress stays in a file on this computer.{" "}
+            <LocalReset />
+          </p>
+        ) : null}
       </header>
 
       <section className="rounded-[2rem] border border-line bg-white/70 p-6 sm:p-8">

@@ -2,24 +2,26 @@ import Link from "next/link";
 
 import { SignOutButton } from "@/components/SignOutButton";
 import { createClient } from "@/lib/supabase/server";
+import { getSupabasePublicEnv } from "@/lib/supabase/env";
 
 export async function SiteHeader() {
-  const supabase = await createClient();
+  const local = getSupabasePublicEnv() === null;
+  const supabase = local ? null : await createClient();
   const user = supabase ? (await supabase.auth.getUser()).data.user : null;
 
   return (
     <header className="border-b border-line">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-5 py-4">
-        <Link href={user ? "/dashboard" : "/"} className="font-serif text-xl tracking-tight">
+        <Link href={local || user ? "/dashboard" : "/"} className="font-serif text-xl tracking-tight">
           Daily LR
         </Link>
         <nav className="flex items-center gap-4 text-sm">
-          {user ? (
+          {local || user ? (
             <>
               <Link href="/question">Today</Link>
               <Link href="/history">History</Link>
               <Link href="/credits">Credits</Link>
-              <SignOutButton />
+              {user ? <SignOutButton /> : <span className="text-muted">This computer</span>}
             </>
           ) : (
             <>
