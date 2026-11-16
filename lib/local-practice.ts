@@ -86,7 +86,12 @@ async function writeSession(session: StoredSession): Promise<void> {
   await writeFile(SESSION_PATH, JSON.stringify(session, null, 2), "utf8");
 }
 
-function withSession<T>(work: (session: StoredSession, bank: BankQuestion[]) => Promise<{ session: StoredSession; value: T }>): Promise<T> {
+function withSession(
+  work: (
+    session: StoredSession,
+    bank: BankQuestion[],
+  ) => Promise<{ session: StoredSession; value: Record<string, unknown> }>,
+): Promise<Record<string, unknown>> {
   const run = writeChain.then(async () => {
     await connection();
     const [session, bank] = await Promise.all([readSession(), loadBank()]);
@@ -353,5 +358,5 @@ export async function localSaveProfile(displayName: string, timezone: string): P
 }
 
 export async function localReset(): Promise<void> {
-  await withSession(async () => ({ session: emptySession(), value: undefined }));
+  await withSession(async () => ({ session: emptySession(), value: {} }));
 }
