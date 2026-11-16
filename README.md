@@ -14,6 +14,19 @@ Streaks count consecutive completion dates in the timezone stored on the profile
 
 The dataset has no difficulty field. Questions are stored with `difficulty = null` and shown as Unrated.
 
+## Run it on this computer, without an account
+
+No Supabase keys are required for a local look at the question and the answer check.
+
+```bash
+npm install
+npm run dev
+```
+
+Open http://localhost:3000 and choose **Start today’s question**. Pick an answer and submit. The explanation appears immediately. The next question stays locked for 24 hours. Progress is stored in `data/local/session.json`, which is not committed. Use **Reset this computer and try again** on the dashboard to clear that lock while you are trying the app.
+
+When `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are set, the app uses Supabase accounts instead of this local file.
+
 ## Setup
 
 1. Create a Supabase project and turn on email/password auth. For a single private user, disabling email confirmation avoids an extra step.
