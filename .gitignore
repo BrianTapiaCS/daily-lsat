@@ -41,6 +41,9 @@ yarn-error.log*
 /data/local/
 /data_sample.json
 
+# supabase CLI scratch files
+supabase/.temp/
+
 # vercel
 .vercel
 
